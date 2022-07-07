@@ -35,6 +35,8 @@
 #include "aram/sidestep.h"
 #include "devices/filemeta.h"
 
+#define SWISS_SYSTEM_DISABLE_DVD 1
+
 u8 driveVersion[32];
 SwissSettings swissSettings;
 
@@ -97,8 +99,9 @@ void Initialise (void)
 	
 	drive_version(&driveVersion[0]);
 	swissSettings.hasDVDDrive = *(u64*)&driveVersion[0] ? 1 : 0;
-	
-	if(!swissSettings.hasDVDDrive) {
+
+	if (!SWISS_SYSTEM_DISABLE_DVD && !swissSettings.hasDVDDrive)
+	{
 		// Reset DVD if there was a IPL replacement that hasn't done that for us yet
 		uiDrawObj_t *progBox = DrawPublish(DrawProgressBar(true, 0, "Initialise DVD .. (HOLD B if NO DVD Drive)"));
 		dvd_reset();	// low-level, basic
